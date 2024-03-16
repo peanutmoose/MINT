@@ -28,7 +28,7 @@ InputBufferSize =packet_bytes*2000*100;
 Timeout = 1;
 
 
-cython=serial('/dev/cu.usbserial-DM01N59D','BaudRate',115200,'DataBits',8)
+cython=serial('/dev/cu.usbserial-DM01N59D','BaudRate',115200,'DataBits',8) % change COM here
 set(cython, 'InputBufferSize', InputBufferSize);
 set(cython, 'Timeout', Timeout);
 
@@ -125,7 +125,7 @@ title('After Moving Variance Filter')
 % converting to 0s and 1s for easier control signal 
 converted_signal=0;
 for j=1:length(moving_variance_filter)
-    if moving_variance_filter(j)<0.005*10^(-7)
+    if moving_variance_filter(j)<0.005*10^(-7) % Change value here
     converted_signal(j)=0;
     else
     converted_signal(j)=1;
