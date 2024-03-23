@@ -28,7 +28,7 @@ InputBufferSize =packet_bytes*2000*100;
 Timeout = 1;
 
 
-cython=serial('/dev/cu.usbserial-DM01N59D','BaudRate',115200,'DataBits',8) % change COM here
+cython=serial('/dev/cu.usbserial-DM01N59D','BaudRate',115200,'DataBits',8)
 set(cython, 'InputBufferSize', InputBufferSize);
 set(cython, 'Timeout', Timeout);
 
@@ -75,9 +75,9 @@ for k=1:50
 % Bytes 27-32: We do not need them, Accelerometer - data 
 % Byte 33: Stop byte =192
 
-test1=temp(6);
-test2=temp(7);
-test3=temp(8);
+test1=temp(3);
+test2=temp(4);
+test3=temp(5);
 D1 = de2bi(test1,8,'left-msb');
 D2 = de2bi(test2,8,'left-msb');
 D3 = de2bi(test3,8,'left-msb');
@@ -125,7 +125,7 @@ title('After Moving Variance Filter')
 % converting to 0s and 1s for easier control signal 
 converted_signal=0;
 for j=1:length(moving_variance_filter)
-    if moving_variance_filter(j)<0.005*10^(-7) % Change value here
+    if moving_variance_filter(j)<0.005*10^(-7)
     converted_signal(j)=0;
     else
     converted_signal(j)=1;
