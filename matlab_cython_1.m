@@ -123,15 +123,21 @@ plot(10*moving_variance_filter)
 title('After Moving Variance Filter')
 
 % converting to 0s and 1s for easier control signal 
-converted_signal=0;
-for j=1:length(moving_variance_filter)
-    if moving_variance_filter(j)<0.005*10^(-7)
-    converted_signal(j)=0;
+% Calculate dynamic threshold for peak detection
+mean_mvVar = mean(moving_variance_filter);
+std_mvVar = std(moving_variance_filter);
+N = 3; % Adjust based on signal characteristics
+dynamicThreshold = mean_mvVar + N * std_mvVar;
+
+% Convert signal above dynamic threshold to 1, else 0
+for j = 1:length(moving_variance_filter)
+    if moving_variance_filter(j) < dynamicThreshold
+        converted_signal(j) = 0;
     else
-    converted_signal(j)=1;
+        converted_signal(j) = 1;
     end
-    subplot(5,1,5)
 end
+
 moving_variance_filter;
 plot(converted_signal);
 title('Converted to 0s and 1s')
