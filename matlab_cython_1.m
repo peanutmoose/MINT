@@ -6,6 +6,28 @@ clc
 delete(instrfindall); % it is a good practice that we call this
 
 
+% here we define the main communication parameters
+arduino = serial('/dev/cu.usbserial-02244AF2','BaudRate',9600,'DataBits',8);    
+
+% We create a serial communication object on port /dev/cu.usbmodem101
+% in your case, the Ardunio microcontroller might not be on /dev/cu.usbmodem101, to
+% double check, go to the Arduino editor, and on click on "Tools". Under the "Tools" menu, there
+% is a "Port" menu, and there the number of the communication port should
+% be displayed
+
+% Define some other parameter, check the MATLAB help for more details 
+InputBufferSize = 8;
+Timeout = 0.1;
+set(arduino , 'InputBufferSize', InputBufferSize);
+set(arduino , 'Timeout', Timeout);
+set(arduino , 'Terminator', 'CR');
+% Now, we are ready to go:
+
+fopen(arduino); % initiate arduino communication
+pause(0.5)
+
+
+
 % these values are specific to the Cyton board
 % b - start stream character
 start_ch=char('b')
@@ -131,10 +153,10 @@ dynamicThreshold = mean_mvVar + N * std_mvVar;
 
 % Convert signal above dynamic threshold to 1, else 0
 for j = 1:length(moving_variance_filter)
-    if moving_variance_filter(j) < dynamicThreshold
-        converted_signal(j) = 0;
-    else
+    if moving_variance_filter(j) > dynamicThreshold
         converted_signal(j) = 1;
+    else
+        converted_signal(j) = 0;
     end
 end
 
@@ -143,7 +165,14 @@ plot(converted_signal);
 title('Converted to 0s and 1s')
 %hold on
 pause(0.001)
+
+%send signal to arduino
+ard_str=(num2str(converted_signal));
+fprintf(arduino,ard_str);
+
+
 %plot(fread(cython, packet_bytes))
 end
 
 fwrite(cython, end_ch, 'uchar');
+%fclose(arduino);
