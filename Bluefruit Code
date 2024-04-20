@@ -3,14 +3,16 @@
 BLEDis bledis;
 BLEHidAdafruit blehid;
 
-bool hasKeyPressed = false;
-int switchControlButtonPin = 11; 
+char rc;
+bool newData = false;
+
+int ledPin = A4;
 
 void setup() 
 {
-  pinMode(switchControlButtonPin, INPUT);
-
-  Serial.begin(57600);
+  Serial.begin(9600);
+  pinMode(ledPin, OUTPUT);
+  digitalWrite(ledPin, LOW);
   while ( !Serial ) delay(10);   // for nrf52840 with native usb
 
   Bluefruit.begin();
@@ -46,29 +48,30 @@ void startAdv(void)
   Bluefruit.Advertising.start(0);                // 0 = Don't stop advertising after n seconds
 }
 
-/*
-void sendSwitchControl(String command) {
-  for (int i = 0; i < command.length(); i++) {
-    blehid.keyPress(command.charAt(i));
-    Serial.write(command.charAt(i));
-    delay(5);
+void loop(){
+  if(Serial.available()>0){
+
+    if (newData == false){
+      rc = Serial.read();
+      newData = true;
+    }
+
+    if (newData == true){
+
+      if(rc == '1'){
+        blehid.keyPress('s');
+        blehid.keyRelease();
+        digitalWrite(ledPin, HIGH);
+        delay(500);
+      }  
+      
+      else{
+        digitalWrite(ledPin, LOW);
+      }
+
+      newData = false;
+
+    }
   }
-  delay(250); // avoid sending the same command again and again
-}*/
-
-void loop() 
-{
-
-  int rc;
-    
-    while (Serial.available()) {
-        rc = Serial.read();
-
-        if (rc == '1') {
-             blehid.keyPress('s');
-            blehid.keyRelease();
-        }
-
-
 }
-}
+
