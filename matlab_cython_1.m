@@ -8,6 +8,7 @@ delete(instrfindall); % it is a good practice that we call this
 
 % here we define the main communication parameters
 arduino = serial('/dev/cu.usbserial-02244AF2','BaudRate',9600,'DataBits',8);    
+set(arduino, 'OutputBufferSize', 2048); % Set the output buffer size to 2048 bytes
 
 % We create a serial communication object on port /dev/cu.usbmodem101
 % in your case, the Ardunio microcontroller might not be on /dev/cu.usbmodem101, to
@@ -167,10 +168,14 @@ title('Converted to 0s and 1s')
 pause(0.001)
 
 %send signal to arduino
-ard_str=(num2str(converted_signal));
-fprintf(arduino,ard_str);
 
-
+for i = length(converted_signal)
+    ard_str = num2str(converted_signal(i));
+    disp(ard_str);
+    fprintf(arduino, ard_str);
+end
+%fprintf(arduino,ard_str);
+%pause(0.45);
 %plot(fread(cython, packet_bytes))
 end
 
